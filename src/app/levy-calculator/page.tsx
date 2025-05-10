@@ -57,7 +57,7 @@ export default function LevyCalculatorPage() {
         setCalculation(result);
         setLoading(false);
       }, 500);
-    } catch (error) {
+    } catch {
       alert('Error calculating levy. Please try again.');
       setLoading(false);
     }
