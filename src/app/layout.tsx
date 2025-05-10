@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import Link from 'next/link';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -25,10 +26,10 @@ export default function RootLayout({
               </div>
               <nav>
                 <ul className="flex space-x-6">
-                  <li><a href="/" className="text-black hover:text-gray-600 hover:underline transition-all">Home</a></li>
-                  <li><a href="/committee" className="text-black hover:text-gray-600 hover:underline transition-all">Committee</a></li>
-                  <li><a href="/documents" className="text-black hover:text-gray-600 hover:underline transition-all">Documents</a></li>
-                  <li><a href="/contact" className="text-black hover:text-gray-600 hover:underline transition-all">Contact</a></li>
+                  <li><Link href="/" className="text-black hover:text-gray-600 hover:underline transition-all">Home</Link></li>
+                  <li><Link href="/committee" className="text-black hover:text-gray-600 hover:underline transition-all">Committee</Link></li>
+                  <li><Link href="/documents" className="text-black hover:text-gray-600 hover:underline transition-all">Documents</Link></li>
+                  <li><Link href="/contact" className="text-black hover:text-gray-600 hover:underline transition-all">Contact</Link></li>
                 </ul>
               </nav>
             </div>
