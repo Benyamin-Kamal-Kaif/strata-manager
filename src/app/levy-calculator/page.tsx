@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 
-// Define types for TypeScript
 interface FormData {
   unitType: string;
   lotSize: string;
@@ -35,26 +34,31 @@ export default function LevyCalculatorPage() {
     setLoading(true);
     
     try {
-      const response = await fetch('/api/levy-calculator', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          unitType: formData.unitType,
-          lotSize: parseInt(formData.lotSize)
-        })
-      });
+      // Client-side calculation logic (no serverless function)
+      const lotSize = parseInt(formData.lotSize);
+      const baseRate = 0.85; // per square meter
+      const estimatedLevy = lotSize * baseRate;
       
-      if (response.ok) {
-        const data: Calculation = await response.json();
-        setCalculation(data);
-      } else {
-        alert('Error calculating levy. Please try again.');
-      }
+      const breakdown = {
+        administration: estimatedLevy * 0.6,
+        capitalWorks: estimatedLevy * 0.3,
+        insurance: estimatedLevy * 0.1
+      };
+      
+      const result: Calculation = {
+        unitType: formData.unitType,
+        lotSize: lotSize,
+        totalLevy: estimatedLevy,
+        breakdown
+      };
+      
+      // Simulate API delay
+      setTimeout(() => {
+        setCalculation(result);
+        setLoading(false);
+      }, 500);
     } catch (error) {
       alert('Error calculating levy. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
@@ -163,7 +167,7 @@ export default function LevyCalculatorPage() {
           <h2 className="text-xl font-semibold mb-4">JavaScript Features Used</h2>
           <ul className="space-y-2 text-sm">
             <li>• <strong>useState Hook:</strong> Managing form state and calculation results</li>
-            <li>• <strong>Async/Await:</strong> Handling API calls for levy calculation</li>
+            <li>• <strong>Client-side Logic:</strong> All calculations performed in the browser</li>
             <li>• <strong>Event Handling:</strong> Form submission and input changes</li>
             <li>• <strong>Conditional Rendering:</strong> Showing/hiding calculation results</li>
             <li>• <strong>Number Formatting:</strong> Displaying currency with proper decimals</li>

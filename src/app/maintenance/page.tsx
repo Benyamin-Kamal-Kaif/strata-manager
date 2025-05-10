@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 
-// Define types for TypeScript
 interface MaintenanceRequest {
   id: number;
   unitNumber: string;
@@ -25,7 +24,6 @@ interface FormData {
 
 export default function MaintenancePage() {
   const [requests, setRequests] = useState<MaintenanceRequest[]>([]);
-  const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     unitNumber: '',
     contactName: '',
@@ -34,48 +32,55 @@ export default function MaintenancePage() {
     urgency: 'normal'
   });
 
-  // HTTP GET - Fetch existing requests
+  // Load requests from localStorage on component mount
   useEffect(() => {
-    fetch('/api/maintenance')
-      .then(response => response.json())
-      .then(data => {
-        if (data.requests) {
-          setRequests(data.requests);
-        }
-      })
-      .catch(error => console.error('Error fetching requests:', error));
+    const savedRequests = localStorage.getItem('maintenanceRequests');
+    if (savedRequests) {
+      setRequests(JSON.parse(savedRequests));
+    }
   }, []);
 
-  // HTTP POST - Submit new request
+  // Save requests to localStorage whenever requests change
+  useEffect(() => {
+    localStorage.setItem('maintenanceRequests', JSON.stringify(requests));
+  }, [requests]);
+
+  // Handle form submission (client-side logic)
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    try {
-      const response = await fetch('/api/maintenance', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData)
-      });
-      
-      if (response.ok) {
-        const newRequest: MaintenanceRequest = await response.json();
-        setRequests([...requests, newRequest]);
-        setFormData({
-          unitNumber: '',
-          contactName: '',
-          contactPhone: '',
-          description: '',
-          urgency: 'normal'
-        });
-        setShowForm(false);
-        alert('Maintenance request submitted successfully!');
-      }
-    } catch (error) {
-      alert('Error submitting request. Please try again.');
-    }
+    // Create new request with client-side logic
+    const newRequest: MaintenanceRequest = {
+      id: Date.now(),
+      ...formData,
+      status: 'Pending',
+      createdAt: new Date().toISOString(),
+      priority: calculatePriority(formData)
+    };
+    
+    setRequests([...requests, newRequest]);
+    setFormData({
+      unitNumber: '',
+      contactName: '',
+      contactPhone: '',
+      description: '',
+      urgency: 'normal'
+    });
+    alert('Maintenance request submitted successfully!');
   };
+
+  // Client-side priority calculation
+  function calculatePriority(request: FormData): 'High' | 'Medium' | 'Low' {
+    const urgentKeywords = ['emergency', 'urgent', 'leak', 'electrical'];
+    
+    if (request.urgency === 'emergency' || 
+        urgentKeywords.some(keyword => 
+          request.description?.toLowerCase().includes(keyword))) {
+      return 'High';
+    }
+    
+    return request.urgency === 'urgent' ? 'Medium' : 'Low';
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center p-8">
@@ -203,6 +208,16 @@ export default function MaintenancePage() {
               )}
             </div>
           </div>
+        </div>
+        
+        {/* Information about client-side storage */}
+        <div className="mt-8 bg-blue-50 p-6 rounded-lg">
+          <h2 className="text-xl font-semibold mb-4">How This Works</h2>
+          <p className="text-sm text-gray-700">
+            Due to Vercel free tier limitations, this application uses client-side storage (localStorage) 
+            to manage maintenance requests. In a production environment with a paid plan, this would 
+            be replaced with a proper database and serverless functions.
+          </p>
         </div>
       </div>
     </main>

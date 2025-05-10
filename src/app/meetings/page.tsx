@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 
+interface Meeting {
+  id: number;
+  title: string;
+  date: string;
+  time: string;
+}
+
 export default function MeetingsPage() {
-  const [meetings, setMeetings] = useState([
-    { id: 1, title: 'Annual General Meeting', date: '2025-05-15', time: '7:00 PM' },
-    { id: 2, title: 'Committee Meeting', date: '2025-04-20', time: '6:30 PM' },
-  ]);
-  
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [newMeeting, setNewMeeting] = useState({
     title: '',
@@ -16,29 +19,37 @@ export default function MeetingsPage() {
     time: ''
   });
 
+  // Load meetings from localStorage
+  useEffect(() => {
+    const savedMeetings = localStorage.getItem('committeeMeetings');
+    if (savedMeetings) {
+      setMeetings(JSON.parse(savedMeetings));
+    } else {
+      // Default meetings if none exist
+      const defaultMeetings = [
+        { id: 1, title: 'Annual General Meeting', date: '2025-05-15', time: '7:00 PM' },
+        { id: 2, title: 'Committee Meeting', date: '2025-04-20', time: '6:30 PM' },
+      ];
+      setMeetings(defaultMeetings);
+    }
+  }, []);
+
+  // Save meetings to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('committeeMeetings', JSON.stringify(meetings));
+  }, [meetings]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const meeting = {
+    const meeting: Meeting = {
       id: Date.now(),
       ...newMeeting
     };
     
-    try {
-      const response = await fetch('/api/meetings', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(meeting)
-      });
-      
-      if (response.ok) {
-        setMeetings([...meetings, meeting]);
-        setNewMeeting({ title: '', date: '', time: '' });
-        setShowForm(false);
-      }
-    } catch (error) {
-      console.error('Error adding meeting:', error);
-    }
+    setMeetings([...meetings, meeting]);
+    setNewMeeting({ title: '', date: '', time: '' });
+    setShowForm(false);
   };
 
   return (
