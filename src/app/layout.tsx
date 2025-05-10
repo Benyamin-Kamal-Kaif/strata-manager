@@ -24,14 +24,17 @@ export default function RootLayout({
               <div>
                 <h1 className="text-2xl font-bold text-black">Strata</h1>
               </div>
-              <nav>
-                <ul className="flex space-x-6">
-                  <li><Link href="/" className="text-black hover:text-gray-600 hover:underline transition-all">Home</Link></li>
-                  <li><Link href="/committee" className="text-black hover:text-gray-600 hover:underline transition-all">Committee</Link></li>
-                  <li><Link href="/documents" className="text-black hover:text-gray-600 hover:underline transition-all">Documents</Link></li>
-                  <li><Link href="/contact" className="text-black hover:text-gray-600 hover:underline transition-all">Contact</Link></li>
-                </ul>
-              </nav>
+                <nav>
+                  <ul className="flex space-x-6">
+                    <li><Link href="/" className="text-black hover:text-gray-600 hover:underline transition-all">Home</Link></li>
+                    <li><Link href="/committee" className="text-black hover:text-gray-600 hover:underline transition-all">Committee</Link></li>
+                    <li><Link href="/documents" className="text-black hover:text-gray-600 hover:underline transition-all">Documents</Link></li>
+                    <li><Link href="/maintenance" className="text-black hover:text-gray-600 hover:underline transition-all">Maintenance</Link></li>
+                    <li><Link href="/meetings" className="text-black hover:text-gray-600 hover:underline transition-all">Meetings</Link></li>
+                    <li><Link href="/financial" className="text-black hover:text-gray-600 hover:underline transition-all">Financial</Link></li>
+                    <li><Link href="/contact" className="text-black hover:text-gray-600 hover:underline transition-all">Contact</Link></li>
+                  </ul>
+                </nav>
             </div>
           </div>
         </header>
