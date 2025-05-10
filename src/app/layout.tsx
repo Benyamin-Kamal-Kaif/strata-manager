@@ -34,7 +34,6 @@ export default function RootLayout({
                   <li><Link href="/maintenance" className="text-black hover:text-gray-600 hover:underline transition-all">Maintenance</Link></li>
                   <li><Link href="/meetings" className="text-black hover:text-gray-600 hover:underline transition-all">Meetings</Link></li>
                   <li><Link href="/financial" className="text-black hover:text-gray-600 hover:underline transition-all">Financial</Link></li>
-                  <li><Link href="/env-demo" className="text-black hover:text-gray-600 hover:underline transition-all">Env Demo</Link></li>
                   <li><Link href="/contact" className="text-black hover:text-gray-600 hover:underline transition-all">Contact</Link></li>
                 </ul>
               </nav>
