@@ -1,0 +1,40 @@
+.section .data
+    a: .byte 5, 4, 6, 3, 3, 4, 12
+    b: .byte 0
+    c: .byte 20
+    d: .space 07
+
+.section .text 
+.global asm_function
+
+asm_function: 
+    ldi r28, lo8(a)
+    ldi r29, hi8(a)
+
+    ldi r30, lo8(d)
+    ldi r31, hi8(d)
+
+    ldi r20, 0
+    lds r22, b 
+    lds r23, c
+
+loop_start:
+    inc r20
+    
+    ld r21, Y+
+    add r22, r21
+
+    cp r22, r23
+    brsh loop_end
+
+    st Z+, r21
+    jmp loop_start
+
+loop_end:
+    sub r22, r21
+    sts b, r22
+    sts c, r23
+
+    ret
+
+.end
