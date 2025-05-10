@@ -2,15 +2,18 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center p-8">
       <div className="max-w-5xl w-full">
-        <h1 className="text-4xl font-bold mb-6 text-center" style={{ color: '#D9D9D9' }}>
-          Strata Manager Portal
+      <h1 className="text-4xl font-bold mb-6 text-center" style={{ color: '#D9D9D9' }}>
+          {process.env.NEXT_PUBLIC_BUILDING_NAME || 'Strata Manager'} Portal
         </h1>
         
         <div className="bg-blue-50 p-6 rounded-lg shadow-md mb-8">
-          <h2 className="text-2xl font-semibold mb-4">Welcome to Your Building Management Website</h2>
+        <h2 className="text-2xl font-semibold mb-4">Welcome to {process.env.NEXT_PUBLIC_BUILDING_NAME}</h2>
           <p className="mb-4">
-            This portal is designed to help the Strata Committee manage our apartment building in accordance
+            This portal is designed to help the Strata Committee manage {process.env.NEXT_PUBLIC_BUILDING_NAME} in accordance
             with the Strata Schemes Management Act (2015) of New South Wales.
+          </p>
+          <p className="text-sm text-gray-600 mt-4">
+            Strata Plan Number: {process.env.NEXT_PUBLIC_STRATA_NUMBER}
           </p>
           <p>
             As a member of the Strata Committee, you can use this website to:
