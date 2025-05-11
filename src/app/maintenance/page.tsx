@@ -291,55 +291,7 @@ export default function MaintenancePage() {
           </div>
         </div>
         
-        {/* HTTP and API Information */}
-        <div className="mt-8 bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">API Integration Details</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-medium mb-2">HTTP Methods Used:</h3>
-              <ul className="space-y-1 text-sm">
-                <li>• <strong>GET:</strong> Fetch existing maintenance requests</li>
-                <li>• <strong>POST:</strong> Submit new maintenance requests</li>
-              </ul>
-              
-              <h3 className="font-medium mb-2 mt-4">Query Parameters:</h3>
-              <ul className="space-y-1 text-sm">
-                <li>• <code>?status=Pending</code> - Filter by status</li>
-                <li>• <code>?priority=High</code> - Filter by priority</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-medium mb-2">Serverless Function Features:</h3>
-              <ul className="space-y-1 text-sm">
-                <li>• <strong>Automatic Priority Calculation:</strong> Based on keywords and urgency</li>
-                <li>• <strong>Input Validation:</strong> Ensures required fields are provided</li>
-                <li>• <strong>Conflict Detection:</strong> Checks for valid data</li>
-                <li>• <strong>RESTful Responses:</strong> Proper HTTP status codes</li>
-              </ul>
-              
-              <div className="mt-4 p-3 bg-blue-50 rounded">
-                <h4 className="font-medium text-blue-900 mb-1">API Endpoint:</h4>
-                <code className="text-sm text-blue-800">/api/maintenance</code>
-              </div>
-            </div>
-          </div>
-          
-          <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-3 bg-green-50 rounded">
-              <h4 className="font-medium text-green-900">201 Created</h4>
-              <p className="text-sm text-green-800">Request successfully created</p>
-            </div>
-            <div className="p-3 bg-yellow-50 rounded">
-              <h4 className="font-medium text-yellow-900">400 Bad Request</h4>
-              <p className="text-sm text-yellow-800">Missing required fields</p>
-            </div>
-            <div className="p-3 bg-red-50 rounded">
-              <h4 className="font-medium text-red-900">500 Server Error</h4>
-              <p className="text-sm text-red-800">Internal server error</p>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </main>
   );

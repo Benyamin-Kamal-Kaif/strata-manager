@@ -287,41 +287,7 @@ export default function MeetingsPage() {
           </div>
         </div>
         
-        {/* API Information */}
-        <div className="mt-8 bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">Meeting API Integration</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="font-medium mb-2">API Features:</h3>
-              <ul className="space-y-1 text-sm">
-                <li>• <strong>GET:</strong> Fetch meetings with filtering options</li>
-                <li>• <strong>POST:</strong> Create new meetings with conflict detection</li>
-                <li>• <strong>Query Parameters:</strong> ?upcoming=true&type=AGM</li>
-                <li>• <strong>Conflict Detection:</strong> Prevents double-booking</li>
-              </ul>
-            </div>
-            
-            <div>
-              <h3 className="font-medium mb-2">HTTP Status Codes:</h3>
-              <div className="grid grid-cols-1 gap-2">
-                <div className="p-2 bg-green-50 rounded text-sm">
-                  <strong>201:</strong> Meeting successfully created
-                </div>
-                <div className="p-2 bg-yellow-50 rounded text-sm">
-                  <strong>409:</strong> Time slot conflict detected
-                </div>
-                <div className="p-2 bg-red-50 rounded text-sm">
-                  <strong>400:</strong> Missing required fields
-                </div>
-              </div>
-              
-              <div className="mt-4 p-3 bg-blue-50 rounded">
-                <h4 className="font-medium text-blue-900 mb-1">API Endpoint:</h4>
-                <code className="text-sm text-blue-800">/api/meetings</code>
-              </div>
-            </div>
-          </div>
-        </div>
+        
       </div>
     </main>
   );
