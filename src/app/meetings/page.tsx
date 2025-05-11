@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface Meeting {
   id: string;
@@ -19,6 +19,11 @@ interface NewMeeting {
   type: string;
 }
 
+interface FilterState {
+  upcoming: boolean;
+  type: string;
+}
+
 export default function MeetingsPage() {
   const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [showForm, setShowForm] = useState(false);
@@ -30,13 +35,13 @@ export default function MeetingsPage() {
   });
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  const [filter, setFilter] = useState<{upcoming: boolean; type: string}>({
+  const [filter, setFilter] = useState<FilterState>({
     upcoming: false,
     type: ''
   });
 
-  // Fetch meetings from serverless function
-  const fetchMeetings = async () => {
+  // Fetch meetings from serverless function using useCallback to fix dependency warning
+  const fetchMeetings = useCallback(async () => {
     try {
       let url = '/api/meetings';
       const params = new URLSearchParams();
@@ -56,15 +61,15 @@ export default function MeetingsPage() {
       } else {
         setError('Failed to fetch meetings');
       }
-    } catch (error) {
+          } catch {
       setError('Error loading meetings');
     }
-  };
+  }, [filter.upcoming, filter.type]);
 
   // Initial load and when filters change
   useEffect(() => {
     fetchMeetings();
-  }, [filter]);
+  }, [fetchMeetings]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -91,15 +96,15 @@ export default function MeetingsPage() {
       } else {
         setError(data.error || 'Failed to schedule meeting');
       }
-    } catch (error) {
+    } catch {
       setError('Error scheduling meeting. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle filter changes
-  const handleFilterChange = (field: string, value: any) => {
+  // Handle filter changes with proper typing
+  const handleFilterChange = (field: keyof FilterState, value: boolean | string) => {
     setFilter({...filter, [field]: value});
   };
 

@@ -52,7 +52,7 @@ export default function LevyCalculatorPage() {
       } else {
         setError(data.error || 'An error occurred while calculating the levy');
       }
-    } catch (error) {
+    } catch {
       setError('Error calculating levy. Please try again.');
     } finally {
       setLoading(false);

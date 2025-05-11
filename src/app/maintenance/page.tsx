@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 interface MaintenanceRequest {
   id: string;
@@ -39,8 +39,8 @@ export default function MaintenancePage() {
     priority: ''
   });
 
-  // Fetch maintenance requests
-  const fetchRequests = async () => {
+  // Fetch maintenance requests using useCallback to fix dependency warning
+  const fetchRequests = useCallback(async () => {
     try {
       let url = '/api/maintenance';
       const params = new URLSearchParams();
@@ -60,15 +60,15 @@ export default function MaintenancePage() {
       } else {
         setError('Failed to fetch maintenance requests');
       }
-    } catch (error) {
+    } catch {
       setError('Error loading maintenance requests');
     }
-  };
+  }, [filter.status, filter.priority]);
 
   // Initial load and when filters change
   useEffect(() => {
     fetchRequests();
-  }, [filter]);
+  }, [fetchRequests]);
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -104,7 +104,7 @@ export default function MaintenancePage() {
       } else {
         setError(data.error || 'Failed to submit maintenance request');
       }
-    } catch (error) {
+    } catch {
       setError('Error submitting request. Please try again.');
     } finally {
       setLoading(false);

@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Temporary in-memory storage
-let meetings: any[] = [
-  { id: '1', title: 'Annual General Meeting', date: '2025-05-15', time: '7:00 PM', type: 'AGM' },
-  { id: '2', title: 'Committee Meeting', date: '2025-04-20', time: '6:30 PM', type: 'Committee' }
+// Define the Meeting interface
+interface Meeting {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  type: string;
+  participants?: string[];
+  createdAt: string;
+}
+
+// Temporary in-memory storage with proper typing
+const meetings: Meeting[] = [
+  { id: '1', title: 'Annual General Meeting', date: '2025-05-15', time: '7:00 PM', type: 'AGM', createdAt: new Date().toISOString() },
+  { id: '2', title: 'Committee Meeting', date: '2025-04-20', time: '6:30 PM', type: 'Committee', createdAt: new Date().toISOString() }
 ];
 
 export async function POST(request: NextRequest) {
@@ -40,7 +51,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Create new meeting
-    const newMeeting = {
+    const newMeeting: Meeting = {
       id: Date.now().toString(),
       ...data,
       type: data.type || 'Committee',
@@ -52,7 +63,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(newMeeting, { status: 201 });
     
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create meeting' },
       { status: 500 }
@@ -91,7 +102,7 @@ export async function GET(request: NextRequest) {
       count: filteredMeetings.length
     });
     
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch meetings' },
       { status: 500 }
