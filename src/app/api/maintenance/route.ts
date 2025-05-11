@@ -1,7 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-// Temporary in-memory storage (would be database in production)
-let maintenanceRequests: any[] = [];
+// Define proper type for maintenance request
+interface MaintenanceRequest {
+  id: string;
+  unitNumber: string;
+  contactName: string;
+  contactPhone: string;
+  description: string;
+  urgency: string;
+  status: string;
+  priority: 'High' | 'Medium' | 'Low';
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Temporary in-memory storage with proper typing - MUST BE const
+const maintenanceRequests: MaintenanceRequest[] = [];
 
 export async function POST(request: NextRequest) {
   try {
@@ -32,9 +46,13 @@ export async function POST(request: NextRequest) {
     };
     
     // Create new maintenance request
-    const newRequest = {
+    const newRequest: MaintenanceRequest = {
       id: Date.now().toString(),
-      ...data,
+      unitNumber: data.unitNumber,
+      contactName: data.contactName,
+      contactPhone: data.contactPhone || '',
+      description: data.description,
+      urgency: data.urgency || 'normal',
       status: 'Pending',
       priority: calculatePriority(data.description, data.urgency || 'normal'),
       createdAt: new Date().toISOString(),
@@ -46,7 +64,7 @@ export async function POST(request: NextRequest) {
     
     return NextResponse.json(newRequest, { status: 201 });
     
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to create maintenance request' },
       { status: 500 }
@@ -77,7 +95,7 @@ export async function GET(request: NextRequest) {
       total: maintenanceRequests.length
     });
     
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: 'Failed to fetch maintenance requests' },
       { status: 500 }
