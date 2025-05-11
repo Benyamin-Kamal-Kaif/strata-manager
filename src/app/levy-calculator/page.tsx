@@ -5,7 +5,6 @@ import { useState } from 'react';
 interface FormData {
   unitType: string;
   lotSize: string;
-  bedrooms: string;
 }
 
 interface Calculation {
@@ -22,43 +21,40 @@ interface Calculation {
 export default function LevyCalculatorPage() {
   const [formData, setFormData] = useState<FormData>({
     unitType: 'apartment',
-    lotSize: '',
-    bedrooms: '1'
+    lotSize: ''
   });
   
   const [calculation, setCalculation] = useState<Calculation | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const calculateLevy = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError(null);
     
     try {
-      // Client-side calculation logic (no serverless function)
-      const lotSize = parseInt(formData.lotSize);
-      const baseRate = 0.85; // per square meter
-      const estimatedLevy = lotSize * baseRate;
+      const response = await fetch('/api/levy-calculator', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          unitType: formData.unitType,
+          lotSize: parseInt(formData.lotSize)
+        })
+      });
       
-      const breakdown = {
-        administration: estimatedLevy * 0.6,
-        capitalWorks: estimatedLevy * 0.3,
-        insurance: estimatedLevy * 0.1
-      };
+      const data = await response.json();
       
-      const result: Calculation = {
-        unitType: formData.unitType,
-        lotSize: lotSize,
-        totalLevy: estimatedLevy,
-        breakdown
-      };
-      
-      // Simulate API delay
-      setTimeout(() => {
-        setCalculation(result);
-        setLoading(false);
-      }, 500);
-    } catch {
-      alert('Error calculating levy. Please try again.');
+      if (response.ok) {
+        setCalculation(data);
+      } else {
+        setError(data.error || 'An error occurred while calculating the levy');
+      }
+    } catch (error) {
+      setError('Error calculating levy. Please try again.');
+    } finally {
       setLoading(false);
     }
   };
@@ -74,7 +70,7 @@ export default function LevyCalculatorPage() {
             
             <form onSubmit={calculateLevy}>
               <div className="mb-4">
-                <label htmlFor="unitType" className="block text-sm font-medium mb-1">
+                <label htmlFor="unitType" className="block text-sm font-medium text-gray-700 mb-1">
                   Unit Type
                 </label>
                 <select
@@ -91,7 +87,7 @@ export default function LevyCalculatorPage() {
               </div>
               
               <div className="mb-4">
-                <label htmlFor="lotSize" className="block text-sm font-medium mb-1">
+                <label htmlFor="lotSize" className="block text-sm font-medium text-gray-700 mb-1">
                   Lot Size (sq meters)
                 </label>
                 <input
@@ -102,13 +98,20 @@ export default function LevyCalculatorPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md"
                   required
                   min="1"
+                  step="0.1"
                 />
               </div>
+              
+              {error && (
+                <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                  {error}
+                </div>
+              )}
               
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50"
+                className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 disabled:opacity-50 transition"
               >
                 {loading ? 'Calculating...' : 'Calculate Levy'}
               </button>
@@ -129,19 +132,19 @@ export default function LevyCalculatorPage() {
                 
                 <h4 className="font-medium mb-2">Breakdown:</h4>
                 <div className="space-y-2">
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center py-1 border-b">
                     <span>Administration Fund</span>
                     <span className="font-medium">
                       ${calculation.breakdown.administration.toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center py-1 border-b">
                     <span>Capital Works Fund</span>
                     <span className="font-medium">
                       ${calculation.breakdown.capitalWorks.toFixed(2)}
                     </span>
                   </div>
-                  <div className="flex justify-between">
+                  <div className="flex justify-between items-center py-1 border-b">
                     <span>Insurance</span>
                     <span className="font-medium">
                       ${calculation.breakdown.insurance.toFixed(2)}
@@ -149,29 +152,63 @@ export default function LevyCalculatorPage() {
                   </div>
                 </div>
                 
-                <div className="mt-4 text-sm text-gray-600">
+                <div className="mt-4 text-sm text-gray-600 bg-gray-50 p-3 rounded">
                   <p>Unit Type: {calculation.unitType}</p>
                   <p>Lot Size: {calculation.lotSize} sq meters</p>
+                  <p className="text-xs mt-2">
+                    * Rates vary by unit type: Apartment ($0.85/m²), Townhouse ($1.10/m²), Commercial ($1.50/m²)
+                  </p>
                 </div>
               </div>
             ) : (
-              <p className="text-gray-500">
-                Enter your unit details to calculate your quarterly levy contribution.
-              </p>
+              <div className="text-gray-500">
+                <p className="mb-4">
+                  Enter your unit details to calculate your quarterly levy contribution.
+                </p>
+                <div className="bg-blue-50 p-3 rounded">
+                  <h4 className="font-medium text-blue-900 mb-2">Rate Information:</h4>
+                  <ul className="text-sm text-blue-800">
+                    <li>• Apartment: $0.85 per sq meter</li>
+                    <li>• Townhouse: $1.10 per sq meter</li>
+                    <li>• Commercial: $1.50 per sq meter</li>
+                  </ul>
+                </div>
+              </div>
             )}
           </div>
         </div>
         
         {/* JavaScript Demonstration */}
         <div className="mt-8 bg-gray-50 p-6 rounded-lg">
-          <h2 className="text-xl font-semibold mb-4">JavaScript Features Used</h2>
-          <ul className="space-y-2 text-sm">
-            <li>• <strong>useState Hook:</strong> Managing form state and calculation results</li>
-            <li>• <strong>Client-side Logic:</strong> All calculations performed in the browser</li>
-            <li>• <strong>Event Handling:</strong> Form submission and input changes</li>
-            <li>• <strong>Conditional Rendering:</strong> Showing/hiding calculation results</li>
-            <li>• <strong>Number Formatting:</strong> Displaying currency with proper decimals</li>
-          </ul>
+          <h2 className="text-xl font-semibold mb-4">Technical Implementation</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-medium mb-2">Frontend Features:</h3>
+              <ul className="space-y-1 text-sm">
+                <li>• <strong>React Hooks:</strong> useState for form and results state management</li>
+                <li>• <strong>Form Handling:</strong> Controlled components with validation</li>
+                <li>• <strong>Async/Await:</strong> Fetch API for serverless function calls</li>
+                <li>• <strong>Error Handling:</strong> User-friendly error messages</li>
+                <li>• <strong>Loading States:</strong> Disabled buttons during calculations</li>
+              </ul>
+            </div>
+            
+            <div>
+              <h3 className="font-medium mb-2">Serverless Function:</h3>
+              <ul className="space-y-1 text-sm">
+                <li>• <strong>HTTP Methods:</strong> POST for calculations, GET for rates</li>
+                <li>• <strong>Input Validation:</strong> Checks for required fields and valid values</li>
+                <li>• <strong>Business Logic:</strong> Different rates for unit types</li>
+                <li>• <strong>Response Format:</strong> JSON with structured calculation breakdown</li>
+                <li>• <strong>Error Responses:</strong> Proper HTTP status codes (400, 500)</li>
+              </ul>
+            </div>
+          </div>
+          
+          <div className="mt-4 p-3 bg-blue-50 rounded">
+            <h4 className="font-medium text-blue-900 mb-1">API Endpoint:</h4>
+            <code className="text-sm text-blue-800">/api/levy-calculator</code>
+          </div>
         </div>
       </div>
     </main>
